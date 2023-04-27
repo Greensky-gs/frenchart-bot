@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { createConnection } from 'mysql'
 import { DefaultQueryResult, QueryResult } from '../typings/database';
+import { CoinsManager } from 'coins-manager';
 config()
 
 const database = createConnection({
@@ -24,3 +25,6 @@ export const query = <T extends any = DefaultQueryResult>(query: string): Promis
         })
     })
 }
+
+export const coins = new CoinsManager(database, { type: 'global' });
+coins.start();
