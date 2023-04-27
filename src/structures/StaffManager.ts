@@ -17,6 +17,9 @@ export class StaffsManager {
         return this._ownerId;
     }
 
+    public isOwner(userId: string) {
+        return userId === this._ownerId;
+    }
     public isStaff(userId: string) {
         if (userId === this._ownerId) return true;
         return this._cache.includes(userId);
