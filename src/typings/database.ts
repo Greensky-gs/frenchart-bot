@@ -11,4 +11,4 @@ export type DefaultQueryResult = {
 export type QueryResult<T> = T extends DefaultQueryResult ? DefaultQueryResult : T[];
 export type staffs = {
     user_id: string;
-}
+};

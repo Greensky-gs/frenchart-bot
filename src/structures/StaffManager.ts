@@ -1,6 +1,6 @@
-import { log4js } from "amethystjs";
-import { staffs } from "../typings/database";
-import { query } from "../utils/query";
+import { log4js } from 'amethystjs';
+import { staffs } from '../typings/database';
+import { query } from '../utils/query';
 
 export class StaffsManager {
     private _cache: string[];
@@ -35,7 +35,7 @@ export class StaffsManager {
         if (!this.isStaff(userId)) return false;
         if (userId === this._ownerId) return false;
 
-        this._cache = this._cache.filter(x => x !== userId);
+        this._cache = this._cache.filter((x) => x !== userId);
         query(`DELETE FROM staffs WHERE user_id='${userId}'`);
         return this;
     }
@@ -46,12 +46,12 @@ export class StaffsManager {
     }
     private async fillCache() {
         const data = await query<staffs>(`SELECT * FROM staffs`);
-        if (!data) return log4js.trace("No data in the cache for staffs")
+        if (!data) return log4js.trace('No data in the cache for staffs');
 
         this._cache = data.map((x) => x.user_id);
     }
     private async start() {
-        await this.checkDb()
+        await this.checkDb();
         this.fillCache();
     }
 }
