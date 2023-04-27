@@ -6,6 +6,7 @@ declare global {
             dbh: string;
             dbu: string;
             dbp: string;
+            serverOwner: string;
         }
     }
 }
