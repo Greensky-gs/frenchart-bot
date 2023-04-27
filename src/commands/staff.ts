@@ -1,5 +1,9 @@
-import { AmethystCommand } from "amethystjs";
+import { AmethystCommand, log4js } from "amethystjs";
 import owner from "../preconditions/owner";
+import { ActionRowBuilder } from "discord.js";
+import { content } from "../utils/toolbox";
+import { alreadyStaff, noUserEmbed } from "../utils/contents";
+import { staffs } from "../utils/query";
 
 export default new AmethystCommand({
     name: 'staff',
@@ -9,7 +13,9 @@ export default new AmethystCommand({
     const subcommand = options.first?.toLowerCase();
     
     if (['ajouter', 'add', 'plus'].includes(subcommand)) {
-        const user = message.mentions.users.first() || message.guild.members.cache.get(options.second) ||;
-        if (!user) 
+        const user = message.mentions.users.first() || message.guild.members.cache.get(options.second)?.user;
+        if (!user) return message.reply(content(noUserEmbed(message.author))).catch(log4js.trace)
+
+        if (staffs.isStaff(user.id)) return message.reply(content(alreadyStaff(message.author, user))).catch(log4js.trace);
     }
 })
