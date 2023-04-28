@@ -16,3 +16,7 @@ export type voice = {
     user_id: string;
     total: number;
 };
+export type roles = {
+    role_id: string;
+    points: number;
+}

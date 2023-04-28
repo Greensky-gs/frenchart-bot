@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 
 config();
 
-const client = new AmethystClient(
+export const client = new AmethystClient(
     {
         intents: ['Guilds', 'GuildMessages', 'GuildVoiceStates', 'MessageContent'],
         partials: [Partials.Channel, Partials.Message]
