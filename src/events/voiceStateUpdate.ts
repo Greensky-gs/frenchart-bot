@@ -3,6 +3,8 @@ import voice from "../maps/voice";
 import { coins, voiceStats } from "../utils/query";
 
 export default new AmethystEvent('voiceStateUpdate', (o, n) => {
+    if (o.member.user.bot) return;
+
     if (!o.channel && n.channel) {
         voice.set(o.member.id, Date.now());
     };
