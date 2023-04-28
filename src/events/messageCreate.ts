@@ -1,6 +1,6 @@
 import { AmethystEvent } from "amethystjs";
 import msgs from "../maps/msgs";
-import { coins } from "../utils/query";
+import { coins, roles } from "../utils/query";
 
 export default new AmethystEvent('messageCreate', (message) => {
     if (!message.guild || message.author.bot) return;
@@ -15,8 +15,5 @@ export default new AmethystEvent('messageCreate', (message) => {
         msgs.set(message.author.id, msgs.get(message.author.id) + 1);
     }
 
-    coins.addCoins({
-        user_id: message.author.id,
-        coins: 1
-    });
+    roles.addPoints(message.author.id, 1)
 })

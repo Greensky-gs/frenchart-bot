@@ -2,7 +2,7 @@ import { AmethystCommand, log4js, preconditions, waitForInteraction } from 'amet
 import staff from '../preconditions/staff';
 import { content, yesNoRow } from '../utils/toolbox';
 import { cancel, classic, interactionNotAllowed, invalidNumber, invalidSubCommands, noUserEmbed } from '../utils/contents';
-import { coins } from '../utils/query';
+import { coins, roles } from '../utils/query';
 import { ComponentType, Message } from 'discord.js';
 
 export default new AmethystCommand({
@@ -20,10 +20,7 @@ export default new AmethystCommand({
         if (isNaN(points) || points < 1)
             return message.reply(content('msg', invalidNumber(message.author))).catch(log4js.trace);
 
-        coins.addCoins({
-            user_id: user.id,
-            coins: points
-        });
+        roles.addPoints(user.id, points);
 
         message
             .reply(

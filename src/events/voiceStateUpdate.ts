@@ -1,6 +1,6 @@
 import { AmethystEvent, log4js } from 'amethystjs';
 import voice from '../maps/voice';
-import { coins, voiceStats } from '../utils/query';
+import { coins, roles, voiceStats } from '../utils/query';
 
 export default new AmethystEvent('voiceStateUpdate', (o, n) => {
     if (o.member.user.bot) return;
@@ -16,10 +16,7 @@ export default new AmethystEvent('voiceStateUpdate', (o, n) => {
         voice.delete(o.member.id);
 
         const minutes = Math.floor(time / 1000);
-        coins.addCoins({
-            user_id: o.member.id,
-            coins: minutes * 1
-        });
+        roles.addPoints(o.member.id, minutes * 1);
         voiceStats.addTime(o.member.id, time);
     }
 });
