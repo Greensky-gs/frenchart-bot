@@ -79,7 +79,6 @@ export class Drop {
     }
 
     private edit() {
-        console.log(this.message)
         this.message.edit({
             embeds: [
                 this.embed
@@ -121,7 +120,7 @@ export class Drop {
             user: this._hoster,
             message: msg,
             time: this._time
-        }).catch(log4js.trace)
+        }).catch(() => {})
         if (resp) {
             resp.deferUpdate().catch(log4js.trace);
             this._winner = resp.user;
