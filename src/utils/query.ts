@@ -4,6 +4,8 @@ import { DefaultQueryResult, QueryResult } from '../typings/database';
 import { CoinsManager } from 'coins-manager';
 import { StaffsManager } from '../structures/StaffManager';
 import { VoiceManager } from '../structures/VoiceStats';
+import { RolesManager } from '../structures/RolesManager';
+import { client } from '..';
 config();
 
 const database = createConnection({
@@ -33,3 +35,4 @@ coins.start();
 
 export const staffs = new StaffsManager(process.env.serverOwner);
 export const voiceStats = new VoiceManager();
+export const roles = new RolesManager(client);
