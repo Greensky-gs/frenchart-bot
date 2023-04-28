@@ -1,6 +1,7 @@
 import { log4js } from 'amethystjs';
 import {
-    ActionRowBuilder, ButtonBuilder,
+    ActionRowBuilder, AnyComponentBuilder, ButtonBuilder,
+    ButtonStyle,
     ChannelSelectMenuBuilder,
     EmbedBuilder,
     InteractionReplyOptions, MessageReplyOptions,
@@ -56,3 +57,24 @@ export const content = <ReturnName extends returnName>(type: ReturnName, ...cont
 
     return ctx as returnType<ReturnName>;
 };
+export const row = <Component extends AnyComponentBuilder>(...components: Component[]): ActionRowBuilder<Component> => {
+    const row = new ActionRowBuilder<Component>().setComponents(components)
+    return row;
+}
+export const button = ({ style, label, emoji, disabled = false, url, id }: { label?: string; emoji?: string; disabled?: boolean; url?: string; style: keyof typeof ButtonStyle; id?: string; }) => {
+    const btn = new ButtonBuilder()
+        .setDisabled(disabled)
+        .setStyle(ButtonStyle[style])
+    if (label) btn.setLabel(label)
+    if (emoji) btn.setEmoji(emoji)
+    if (url) btn.setURL(url)
+    if (id) btn.setCustomId(id)
+
+    return btn;
+}
+export const yesNoRow = () => {
+    return row(
+        button({ id: 'yes', label: 'Oui', style: "Success" }),
+        button({ id: 'no', label: 'Non', style: 'Danger' })
+    )
+}
