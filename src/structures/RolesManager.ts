@@ -22,7 +22,8 @@ export class RolesManager {
         this.guild = this.client.guilds.cache.get(process.env.serverID);
         
         if (!this.guild) {
-            throw new Error("Bot cannot find the server")
+            // throw new Error("Bot cannot find the server")
+            return
         }
         const roles = await query<roles>(`SELECT * FROM roles`);
         if (!roles) return log4js.trace("No response from roles query (database)");
@@ -42,10 +43,17 @@ export class RolesManager {
         await this.check();
         await this.fetch();
     }
+    private aboveRoles(userId: string) {
+        const data = coins.getData({ user_id: userId }).coins;
+        return this.cache.filter(x => x.points > data);
+    }
     private hasRolesAbove(userId: string) {
         return this.aboveRoles(userId).length > 0;
     }
-    private aboveRoles(userId: string) {
+    private hasRolesUnder(userId: string) {
+        return this.underRoles(userId).length > 0;
+    }
+    private underRoles(userId: string) {
         const data = coins.getData({
             user_id: userId
         });
@@ -59,13 +67,27 @@ export class RolesManager {
             coins: points
         })
 
-        if (!this.hasRolesAbove(userId)) return 'ok';
+        if (!this.hasRolesUnder(userId)) return 'ok';
 
         const member = this.guild.members.cache.get(userId);
         if (!member) return log4js.trace(`Member not found when add roles is necessary`);
 
-        const roles = this.aboveRoles(userId);
+        const roles = this.underRoles(userId);
         member.roles.add(roles.map(r => r.role)).catch(log4js.trace);
+    }
+    public removePoints(userId: string, points: number) {
+        const rs = coins.removeCoins({
+            user_id: userId,
+            coins: points
+        });
+        if (rs === 'not enough coins') return 'not enough coins';
+        if (this.hasRolesAbove(userId)) {
+            const member = this.guild.members.cache.get(userId);
+            if (!member) return log4js.trace(`Member not fund when remove roles is necessary`);
+
+            const roles = this.aboveRoles(userId);
+            member.roles.remove(roles.map(x => x.role)).catch(log4js.trace);
+        }
     }
     public isRoleIncluded(roleId: string) {
         return !!this.cache.find(x => x.role.id === roleId);

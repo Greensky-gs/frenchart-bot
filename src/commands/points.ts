@@ -37,10 +37,7 @@ export default new AmethystCommand({
         if (isNaN(points) || points < 1)
             return message.reply(content('msg', invalidNumber(message.author))).catch(log4js.trace);
 
-        const rs = coins.removeCoins({
-            user_id: user.id,
-            coins: points
-        });
+        const rs = roles.removePoints(user.id, points);
         if (rs === 'not enough coins')
             return message
                 .reply(
@@ -97,10 +94,9 @@ export default new AmethystCommand({
                 content: ''
             }).catch(log4js.trace);
         }
-        coins.removeCoins({
-            user_id: user.id,
-            coins: coins.getData({ user_id: user.id }).coins
-        });
+        roles.removePoints(user.id,
+            coins.getData({ user_id: user.id }).coins
+        );
         msg.edit({
             components: [],
             embeds: [],

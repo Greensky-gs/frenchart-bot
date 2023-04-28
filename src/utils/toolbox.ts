@@ -2,6 +2,7 @@ import { log4js } from 'amethystjs';
 import {
     ActionRowBuilder,
     AnyComponentBuilder,
+    BaseChannel,
     ButtonBuilder,
     ButtonStyle,
     ChannelSelectMenuBuilder,
@@ -9,6 +10,7 @@ import {
     GuildMember,
     InteractionReplyOptions,
     MessageReplyOptions,
+    Role,
     RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
     User,
@@ -140,3 +142,12 @@ export const formatTime = (timeInSeconds: number): string => {
     });
     return res;
 };
+export const pingRole = (role: Role | string) => {
+        if (role instanceof Role) return `<@&${role.id}>`;
+    return `<@&${role}>`
+}
+export const pingChannel = (channel: BaseChannel | string) => {
+    if (channel instanceof BaseChannel) return `<#${channel.id}>`;
+    return `<#${channel}>`
+}
+export const formatMSTime = (input: string) => input.replace(/j/g, 'd').replace(/sm/g, 'w')
