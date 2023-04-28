@@ -1,8 +1,9 @@
-import { AmethystCommand, log4js, preconditions } from 'amethystjs';
+import { AmethystCommand, log4js, preconditions, waitForInteraction } from 'amethystjs';
 import staff from '../preconditions/staff';
-import { content } from '../utils/toolbox';
-import { classic, invalidNumber, invalidSubCommands, noUserEmbed } from '../utils/contents';
+import { content, yesNoRow } from '../utils/toolbox';
+import { cancel, classic, interactionNotAllowed, invalidNumber, invalidSubCommands, noUserEmbed } from '../utils/contents';
 import { coins } from '../utils/query';
+import { ComponentType, Message } from 'discord.js';
 
 export default new AmethystCommand({
     name: 'points',
@@ -52,7 +53,7 @@ export default new AmethystCommand({
 
         message
             .reply(
-                `✅ | **${points.toLocaleString()}** point${points === 1 ? ' a' : 's ont'} été ajouté${
+                `✅ | **${points.toLocaleString()}** point${points === 1 ? ' a' : 's ont'} été retiré${
                     points === 1 ? '' : 's'
                 } à **${user.username}**`
             )
@@ -74,7 +75,41 @@ export default new AmethystCommand({
                 )
             )
             .catch(log4js.trace);
+    } else if (['reset', 'réinitialiser', 'rs'].includes(subcommand)) {
+        const data = coins.getData({
+            user_id: user.id
+        });
+        if (data.coins === 0) return message.reply(`:x: | **${user.username}** n'a aucun points à réinitialiser`).catch(log4js.trace);
+        const msg = await message.reply(content('msg', `Êtes-vous sûr de retirer les **${data.coins.toLocaleString()}** point${data.coins === 1 ? '' : 's'} de ${user.username} ?`, yesNoRow())).catch(log4js.trace) as Message<true>;
+
+
+        if (!msg) return log4js.trace({ msg: `Message not found in points reset command`, author: message.author.id });
+        const rep = await waitForInteraction({
+            componentType: ComponentType.Button,
+            message: msg,
+            replies: {
+                everyone: interactionNotAllowed(message.author).ctx
+            },
+            user: message.author
+        }).catch(log4js.trace);
+
+        if (!rep || rep.customId === 'no') {
+            return msg.edit({
+                components: [],
+                embeds:[ cancel() ],
+                content: ''
+            }).catch(log4js.trace);
+        }
+        coins.removeCoins({
+            user_id: user.id,
+            coins: coins.getData({ user_id: user.id }).coins
+        });
+        msg.edit({
+            components: [],
+            embeds: [],
+            content: `✅ | Les points de **${user.username}** ont été réinitialisés`
+        }).catch(log4js.trace);
     } else {
-        message.reply(invalidSubCommands('ajouter', 'enlever', 'voir')).catch(log4js.trace);
+        message.reply(invalidSubCommands('ajouter', 'enlever', 'réinitialiser', 'voir')).catch(log4js.trace);
     }
 });
