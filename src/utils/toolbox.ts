@@ -4,9 +4,11 @@ import {
     ButtonStyle,
     ChannelSelectMenuBuilder,
     EmbedBuilder,
+    GuildMember,
     InteractionReplyOptions, MessageReplyOptions,
     RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
+    User,
     UserSelectMenuBuilder
 } from 'discord.js';
 
@@ -77,4 +79,8 @@ export const yesNoRow = () => {
         button({ id: 'yes', label: 'Oui', style: "Success" }),
         button({ id: 'no', label: 'Non', style: 'Danger' })
     )
+}
+export const pingUser = (user: string | User | GuildMember) => {
+    if (typeof user === 'string') return `<@${user}>`;
+    return `<@${user.id}>`
 }

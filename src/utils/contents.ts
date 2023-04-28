@@ -14,3 +14,10 @@ export const noUserEmbed = (user: User) =>
         .setDescription(`Aucun utilisateur n'a été trouvé.\nUtilisez une mention ou un identifiant`);
 export const alreadyStaff = (user: User, staffed: User) =>
     basicEmbed(user).setTitle('Déjà staff').setColor('#ff0000').setDescription(`<@${staffed.id}> est déjà staff`);
+export const staffed = (user: User, staffed: User) => basicEmbed(user).setTitle("Staff ajouté").setDescription(`<@${staffed.id}> a été ajouté en tant que staff`).setColor('#00ff00')
+export const notStaff = (user: User, staffed: User) => basicEmbed(user).setTitle('Non-staff').setColor('#ff0000').setDescription(`<@${staffed.id}> n'est pas un staff`);
+export const unstaffed = (user: User, staffed: User) => basicEmbed(user).setTitle("Staff retiré").setDescription(`<@${staffed.id}> a été retiré des staff`).setColor('#00ff00')
+export const classic = basicEmbed;
+export const invalidSubCommands = (...cmds: string[]) => {
+    return `:x: | Merci d'utiliser une des sous-commandes valides : ${cmds.map(c => `\`${c}\``).join(', ')}`
+}
