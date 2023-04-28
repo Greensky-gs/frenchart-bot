@@ -1,5 +1,5 @@
 import { EmbedBuilder, GuildMember, User } from 'discord.js';
-import { formatTime } from './toolbox';
+import { content, formatTime } from './toolbox';
 
 const basicEmbed = (user?: User) => {
     const embed = new EmbedBuilder().setTimestamp();
@@ -58,3 +58,9 @@ export const stats = (user: GuildMember, data: { voice: number; points: number }
         .setColor(user.guild.members.me.displayHexColor ?? 'Orange');
     return embed;
 };
+export const interactionNotAllowed = (user: User) => {
+    return {
+        msg: content('msg', basicEmbed(user).setTitle("Interaction refusée").setDescription(`Vous ne pouvez pas interagir avec ce message`).setColor('#ff0000')),
+        ctx: content('ctx', { ephemeral: true }, basicEmbed(user).setTitle("Interaction refusée").setDescription(`Vous ne pouvez pas interagir avec ce message`).setColor('#ff0000'))
+    }
+}
