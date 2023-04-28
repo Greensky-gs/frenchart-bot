@@ -1,4 +1,4 @@
-import { AmethystCommand, log4js } from 'amethystjs';
+import { AmethystCommand, log4js, preconditions } from 'amethystjs';
 import owner from '../preconditions/owner';
 import { content, pingUser } from '../utils/toolbox';
 import { alreadyStaff, classic, invalidSubCommands, noUserEmbed, notStaff, staffed, unstaffed } from '../utils/contents';
@@ -6,7 +6,7 @@ import { staffs } from '../utils/query';
 
 export default new AmethystCommand({
     name: 'staff',
-    preconditions: [owner],
+    preconditions: [owner, preconditions.GuildOnly],
     description: 'Gère les staffs'
 }).setMessageRun(({ message, options }) => {
     const subcommand = options.first?.toLowerCase();

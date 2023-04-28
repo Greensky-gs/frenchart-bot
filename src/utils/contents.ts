@@ -21,3 +21,4 @@ export const classic = basicEmbed;
 export const invalidSubCommands = (...cmds: string[]) => {
     return `:x: | Merci d'utiliser une des sous-commandes valides : ${cmds.map(c => `\`${c}\``).join(', ')}`
 }
+export const invalidNumber = (user: User) => basicEmbed(user).setTitle("Nombre invalide").setDescription(`Ce n'est pas un nombre valide`).setColor('#ff0000')
