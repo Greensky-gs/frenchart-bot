@@ -1,4 +1,5 @@
 import { EmbedBuilder, GuildMember, User } from 'discord.js';
+import { formatTime } from './toolbox';
 
 const basicEmbed = (user?: User) => {
     const embed = new EmbedBuilder().setTimestamp();
@@ -24,3 +25,22 @@ export const invalidSubCommands = (...cmds: string[]) => {
 export const invalidNumber = (user: User) => basicEmbed(user).setTitle("Nombre invalide").setDescription(`Ce n'est pas un nombre valide`).setColor('#ff0000')
 export const baseLeaderboard = (member: GuildMember) => basicEmbed(member.user).setTitle("Classement").setDescription(`Voici le classement des points du serveur`).setColor(member.guild.members.me.displayHexColor ?? 'Orange')
 export const cancel = () => new EmbedBuilder().setTitle("💡 Annulé").setColor('Yellow')
+export const stats = (user: GuildMember, data: { voice: number; points: number }) => {
+    const embed = basicEmbed(user.user)
+        .setTitle("Statistiques")
+        .setDescription(`Voici vos statistiques sur le serveur **French Art**`)
+        .setFields(
+            {
+                name: "Temps en vocal",
+                value: formatTime(Math.floor((data.voice ?? 0) / 1000)) ?? "0 secondes",
+                inline: true
+            },
+            {
+                name: 'Points',
+                value: `**${data.points.toLocaleString()}** points`,
+                inline: true
+            }
+        )
+        .setColor(user.guild.members.me.displayHexColor ?? 'Orange')
+    return embed;    
+}

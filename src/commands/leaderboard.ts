@@ -1,4 +1,4 @@
-import { AmethystCommand, log4js } from "amethystjs";
+import { AmethystCommand, log4js, preconditions } from "amethystjs";
 import { coins } from "../utils/query";
 import { account } from "coins-manager";
 import { EmbedBuilder, GuildMember } from "discord.js";
@@ -9,6 +9,7 @@ import { Paginator } from "dsc-pagination";
 export default new AmethystCommand({
     name: 'classement',
     description: "Affiche le classement des points du serveur",
+    preconditions: [preconditions.GuildOnly]
 }).setChatInputRun(async({ interaction }) => {
     const leaderboard = coins.getLeaderboard(null);
     if (leaderboard.length === 0) return interaction.reply(`:x: | Personne n'est classé dans le serveur`).catch(log4js.trace);
