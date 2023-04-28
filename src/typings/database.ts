@@ -15,4 +15,4 @@ export type staffs = {
 export type voice = {
     user_id: string;
     total: number;
-}
+};

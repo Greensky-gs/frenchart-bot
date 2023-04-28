@@ -1,11 +1,14 @@
 import { log4js } from 'amethystjs';
 import {
-    ActionRowBuilder, AnyComponentBuilder, ButtonBuilder,
+    ActionRowBuilder,
+    AnyComponentBuilder,
+    ButtonBuilder,
     ButtonStyle,
     ChannelSelectMenuBuilder,
     EmbedBuilder,
     GuildMember,
-    InteractionReplyOptions, MessageReplyOptions,
+    InteractionReplyOptions,
+    MessageReplyOptions,
     RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
     User,
@@ -24,9 +27,12 @@ type contentType =
     | EmbedBuilder
     | { fetchReply?: boolean; ephemeral?: boolean };
 
-type returnName = 'msg' | 'ctx'
+type returnName = 'msg' | 'ctx';
 type returnType<Name extends returnName> = Name extends 'msg' ? MessageReplyOptions : InteractionReplyOptions;
-export const content = <ReturnName extends returnName>(type: ReturnName, ...contents: contentType[]): returnType<ReturnName> => {
+export const content = <ReturnName extends returnName>(
+    type: ReturnName,
+    ...contents: contentType[]
+): returnType<ReturnName> => {
     const ctx = {} as returnType<returnName>;
     contents.forEach((ct) => {
         if (ct instanceof EmbedBuilder) {
@@ -60,30 +66,42 @@ export const content = <ReturnName extends returnName>(type: ReturnName, ...cont
     return ctx as returnType<ReturnName>;
 };
 export const row = <Component extends AnyComponentBuilder>(...components: Component[]): ActionRowBuilder<Component> => {
-    const row = new ActionRowBuilder<Component>().setComponents(components)
+    const row = new ActionRowBuilder<Component>().setComponents(components);
     return row;
-}
-export const button = ({ style, label, emoji, disabled = false, url, id }: { label?: string; emoji?: string; disabled?: boolean; url?: string; style: keyof typeof ButtonStyle; id?: string; }) => {
-    const btn = new ButtonBuilder()
-        .setDisabled(disabled)
-        .setStyle(ButtonStyle[style])
-    if (label) btn.setLabel(label)
-    if (emoji) btn.setEmoji(emoji)
-    if (url) btn.setURL(url)
-    if (id) btn.setCustomId(id)
+};
+export const button = ({
+    style,
+    label,
+    emoji,
+    disabled = false,
+    url,
+    id
+}: {
+    label?: string;
+    emoji?: string;
+    disabled?: boolean;
+    url?: string;
+    style: keyof typeof ButtonStyle;
+    id?: string;
+}) => {
+    const btn = new ButtonBuilder().setDisabled(disabled).setStyle(ButtonStyle[style]);
+    if (label) btn.setLabel(label);
+    if (emoji) btn.setEmoji(emoji);
+    if (url) btn.setURL(url);
+    if (id) btn.setCustomId(id);
 
     return btn;
-}
+};
 export const yesNoRow = () => {
     return row(
-        button({ id: 'yes', label: 'Oui', style: "Success" }),
+        button({ id: 'yes', label: 'Oui', style: 'Success' }),
         button({ id: 'no', label: 'Non', style: 'Danger' })
-    )
-}
+    );
+};
 export const pingUser = (user: string | User | GuildMember) => {
     if (typeof user === 'string') return `<@${user}>`;
-    return `<@${user.id}>`
-}
+    return `<@${user.id}>`;
+};
 export const formatTime = (timeInSeconds: number): string => {
     let seconds = 0;
     let minutes = 0;
