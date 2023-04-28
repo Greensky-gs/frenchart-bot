@@ -1,4 +1,4 @@
-import { EmbedBuilder, User } from 'discord.js';
+import { EmbedBuilder, GuildMember, User } from 'discord.js';
 
 const basicEmbed = (user?: User) => {
     const embed = new EmbedBuilder().setTimestamp();
@@ -22,3 +22,5 @@ export const invalidSubCommands = (...cmds: string[]) => {
     return `:x: | Merci d'utiliser une des sous-commandes valides : ${cmds.map(c => `\`${c}\``).join(', ')}`
 }
 export const invalidNumber = (user: User) => basicEmbed(user).setTitle("Nombre invalide").setDescription(`Ce n'est pas un nombre valide`).setColor('#ff0000')
+export const baseLeaderboard = (member: GuildMember) => basicEmbed(member.user).setTitle("Classement").setDescription(`Voici le classement des points du serveur`).setColor(member.guild.members.me.displayHexColor ?? 'Orange')
+export const cancel = () => new EmbedBuilder().setTitle("💡 Annulé").setColor('Yellow')
