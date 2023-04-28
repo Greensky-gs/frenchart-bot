@@ -27,7 +27,7 @@ export default new AmethystCommand({
         if (!staffs.isStaff(user.id))
             return message.reply(content('msg', notStaff(message.author, user))).catch(log4js.trace);
         
-        staffs.addStaff(user.id);
+        staffs.removeStaff(user.id);
         message.reply(content('msg', unstaffed(message.author, user))).catch(log4js.trace)
     } else if (['list', 'liste', 'view', 'show', 'all', 'afficher'].includes(subcommand)) {
         if (staffs.cache.length === 0) return message.reply(content('msg', `:x: | Il n'y a aucun staff dans la liste`)).catch(log4js.trace);
