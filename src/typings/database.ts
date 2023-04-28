@@ -20,3 +20,10 @@ export type roles = {
     role_id: string;
     points: number;
 };
+export type item = {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    left: number;
+}
