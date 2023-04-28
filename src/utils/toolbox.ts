@@ -38,7 +38,7 @@ export const content = <ReturnName extends returnName>(type: ReturnName, ...cont
             }
         }
         if (typeof ct === 'string') {
-            if (ctx.content.length > 0) {
+            if (ct.length > 0) {
                 ctx.content = ct;
             } else {
                 log4js.trace('Content is null');
@@ -84,3 +84,41 @@ export const pingUser = (user: string | User | GuildMember) => {
     if (typeof user === 'string') return `<@${user}>`;
     return `<@${user.id}>`
 }
+export const formatTime = (timeInSeconds: number): string => {
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+
+    for (let i = 0; i < timeInSeconds; i++) {
+        seconds++;
+        if (seconds === 60) {
+            minutes++;
+            seconds = 0;
+            if (minutes === 60) {
+                hours++;
+                minutes = 0;
+            }
+        }
+    }
+    let res = '';
+    const values: string[] = [];
+    [
+        { x: hours, y: 'heures' },
+        { x: minutes, y: 'minutes' },
+        { x: seconds, y: 'secondes' }
+    ]
+        .filter((x) => x.x > 0)
+        .forEach((x) => {
+            values.push(`${x.x} ${x.x === 1 ? x.y.substring(0, x.y.length - 1) : x.y}`);
+        });
+
+    values.forEach((v, i) => {
+        res += `${v}`;
+        const next = values[i + 1];
+        if (!next) return;
+        const dnext = values[i + 2];
+        let sep = dnext ? ',' : ' ' + 'et';
+        res += sep + ' ';
+    });
+    return res;
+};
