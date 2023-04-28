@@ -1,4 +1,4 @@
-import { AmethystEvent } from 'amethystjs';
+import { AmethystEvent, log4js } from 'amethystjs';
 import { ActivityType } from 'discord.js';
 
 export default new AmethystEvent('ready', async (client) => {

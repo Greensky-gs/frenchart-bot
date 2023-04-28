@@ -3,6 +3,7 @@ import { createConnection } from 'mysql';
 import { DefaultQueryResult, QueryResult } from '../typings/database';
 import { CoinsManager } from 'coins-manager';
 import { StaffsManager } from '../structures/StaffManager';
+import { VoiceManager } from '../structures/VoiceStats';
 config();
 
 const database = createConnection({
@@ -31,3 +32,4 @@ export const coins = new CoinsManager(database, { type: 'global' });
 coins.start();
 
 export const staffs = new StaffsManager(process.env.serverOwner);
+export const voiceStats = new VoiceManager();

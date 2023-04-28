@@ -12,3 +12,7 @@ export type QueryResult<T> = T extends DefaultQueryResult ? DefaultQueryResult :
 export type staffs = {
     user_id: string;
 };
+export type voice = {
+    user_id: string;
+    total: number;
+}
