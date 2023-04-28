@@ -19,4 +19,4 @@ export type voice = {
 export type roles = {
     role_id: string;
     points: number;
-}
+};

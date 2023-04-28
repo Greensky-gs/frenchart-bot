@@ -60,21 +60,53 @@ export const stats = (user: GuildMember, data: { voice: number; points: number }
 };
 export const interactionNotAllowed = (user: User) => {
     return {
-        msg: content('msg', basicEmbed(user).setTitle("Interaction refusée").setDescription(`Vous ne pouvez pas interagir avec ce message`).setColor('#ff0000')),
-        ctx: content('ctx', { ephemeral: true }, basicEmbed(user).setTitle("Interaction refusée").setDescription(`Vous ne pouvez pas interagir avec ce message`).setColor('#ff0000'))
-    }
-}
-export const noRole = (user: User) => basicEmbed(user).setTitle("Pas de rôle").setDescription(`Le rôle est introuvable.\nRéessayez avec une mention ou un identifiant`).setColor('#ff0000')
+        msg: content(
+            'msg',
+            basicEmbed(user)
+                .setTitle('Interaction refusée')
+                .setDescription(`Vous ne pouvez pas interagir avec ce message`)
+                .setColor('#ff0000')
+        ),
+        ctx: content(
+            'ctx',
+            { ephemeral: true },
+            basicEmbed(user)
+                .setTitle('Interaction refusée')
+                .setDescription(`Vous ne pouvez pas interagir avec ce message`)
+                .setColor('#ff0000')
+        )
+    };
+};
+export const noRole = (user: User) =>
+    basicEmbed(user)
+        .setTitle('Pas de rôle')
+        .setDescription(`Le rôle est introuvable.\nRéessayez avec une mention ou un identifiant`)
+        .setColor('#ff0000');
 export const roleList = ({ user, ...member }: GuildMember, roles: { role: Role; points: number }[]) => {
     const embed = basicEmbed(user)
-        .setTitle("Rôles de points")
-        .setDescription(`**${roles.length.toLocaleString()}** rôles sont des rôles de points :\n${roles.map(r => `${pingRole(r.role)} : ${r.points.toLocaleString()} points`)}`)
-        .setColor(member.guild.members.me.displayHexColor ?? 'Orange')
+        .setTitle('Rôles de points')
+        .setDescription(
+            `**${roles.length.toLocaleString()}** rôles sont des rôles de points :\n${roles.map(
+                (r) => `${pingRole(r.role)} : ${r.points.toLocaleString()} points`
+            )}`
+        )
+        .setColor(member.guild.members.me.displayHexColor ?? 'Orange');
     return embed;
-}
-export const noChannel = (user: User) => basicEmbed(user).setTitle("Pas de salon").setDescription(`Aucun salon n'a été trouvé.\nRéessayez avec un nom, une mention ou un identifiant`).setColor('#ff0000')
-export const channelMustBeText = (user: User, channel: string) => basicEmbed(user)
-    .setTitle("Salon invalide")
-    .setDescription(`Le salon ${pingChannel(channel)} n'est pas un salon textuel`)
-    .setColor('#ff0000')
-export const timeHelp = (user: User) => basicEmbed(user)    .setTitle("Temps invalide").setDescription(`Ce n'est pas une durée valide.\nUtilisez \`s\` pour les secondes, \`m\` pour les minutes, \`h\` pour les heures, \`j\` pour les jours et \`sm\` pour les semaines`).setColor('#ff0000')
+};
+export const noChannel = (user: User) =>
+    basicEmbed(user)
+        .setTitle('Pas de salon')
+        .setDescription(`Aucun salon n'a été trouvé.\nRéessayez avec un nom, une mention ou un identifiant`)
+        .setColor('#ff0000');
+export const channelMustBeText = (user: User, channel: string) =>
+    basicEmbed(user)
+        .setTitle('Salon invalide')
+        .setDescription(`Le salon ${pingChannel(channel)} n'est pas un salon textuel`)
+        .setColor('#ff0000');
+export const timeHelp = (user: User) =>
+    basicEmbed(user)
+        .setTitle('Temps invalide')
+        .setDescription(
+            `Ce n'est pas une durée valide.\nUtilisez \`s\` pour les secondes, \`m\` pour les minutes, \`h\` pour les heures, \`j\` pour les jours et \`sm\` pour les semaines`
+        )
+        .setColor('#ff0000');

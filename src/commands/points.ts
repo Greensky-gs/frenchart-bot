@@ -1,7 +1,14 @@
 import { AmethystCommand, log4js, preconditions, waitForInteraction } from 'amethystjs';
 import staff from '../preconditions/staff';
 import { content, yesNoRow } from '../utils/toolbox';
-import { cancel, classic, interactionNotAllowed, invalidNumber, invalidSubCommands, noUserEmbed } from '../utils/contents';
+import {
+    cancel,
+    classic,
+    interactionNotAllowed,
+    invalidNumber,
+    invalidSubCommands,
+    noUserEmbed
+} from '../utils/contents';
 import { coins, roles } from '../utils/query';
 import { ComponentType, Message } from 'discord.js';
 
@@ -73,9 +80,19 @@ export default new AmethystCommand({
         const data = coins.getData({
             user_id: user.id
         });
-        if (data.coins === 0) return message.reply(`:x: | **${user.username}** n'a aucun points à réinitialiser`).catch(log4js.trace);
-        const msg = await message.reply(content('msg', `Êtes-vous sûr de retirer les **${data.coins.toLocaleString()}** point${data.coins === 1 ? '' : 's'} de ${user.username} ?`, yesNoRow())).catch(log4js.trace) as Message<true>;
-
+        if (data.coins === 0)
+            return message.reply(`:x: | **${user.username}** n'a aucun points à réinitialiser`).catch(log4js.trace);
+        const msg = (await message
+            .reply(
+                content(
+                    'msg',
+                    `Êtes-vous sûr de retirer les **${data.coins.toLocaleString()}** point${
+                        data.coins === 1 ? '' : 's'
+                    } de ${user.username} ?`,
+                    yesNoRow()
+                )
+            )
+            .catch(log4js.trace)) as Message<true>;
 
         if (!msg) return log4js.trace({ msg: `Message not found in points reset command`, author: message.author.id });
         const rep = await waitForInteraction({
@@ -88,15 +105,15 @@ export default new AmethystCommand({
         }).catch(log4js.trace);
 
         if (!rep || rep.customId === 'no') {
-            return msg.edit({
-                components: [],
-                embeds:[ cancel() ],
-                content: ''
-            }).catch(log4js.trace);
+            return msg
+                .edit({
+                    components: [],
+                    embeds: [cancel()],
+                    content: ''
+                })
+                .catch(log4js.trace);
         }
-        roles.removePoints(user.id,
-            coins.getData({ user_id: user.id }).coins
-        );
+        roles.removePoints(user.id, coins.getData({ user_id: user.id }).coins);
         msg.edit({
             components: [],
             embeds: [],
