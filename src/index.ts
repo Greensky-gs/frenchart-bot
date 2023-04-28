@@ -6,7 +6,7 @@ config();
 
 const client = new AmethystClient(
     {
-        intents: ['Guilds', 'GuildMessages', 'GuildVoiceStates'],
+        intents: ['Guilds', 'GuildMessages', 'GuildVoiceStates', 'MessageContent'],
         partials: [Partials.Channel, Partials.Message]
     },
     {
