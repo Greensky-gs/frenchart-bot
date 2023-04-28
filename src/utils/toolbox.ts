@@ -1,14 +1,9 @@
 import { log4js } from 'amethystjs';
 import {
-    ActionRowBuilder,
-    AnyComponentBuilder,
-    BaseSelectMenuBuilder,
-    ButtonBuilder,
+    ActionRowBuilder, ButtonBuilder,
     ChannelSelectMenuBuilder,
     EmbedBuilder,
-    InteractionReplyOptions,
-    MessagePayload,
-    MessageReplyOptions,
+    InteractionReplyOptions, MessageReplyOptions,
     RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
     UserSelectMenuBuilder
@@ -26,8 +21,10 @@ type contentType =
     | EmbedBuilder
     | { fetchReply?: boolean; ephemeral?: boolean };
 
-export const content = (...contents: contentType[]) => {
-    const ctx = {} as MessageReplyOptions;
+type returnName = 'msg' | 'ctx'
+type returnType<Name extends returnName> = Name extends 'msg' ? MessageReplyOptions : InteractionReplyOptions;
+export const content = <ReturnName extends returnName>(type: ReturnName, ...contents: contentType[]): returnType<ReturnName> => {
+    const ctx = {} as returnType<returnName>;
     contents.forEach((ct) => {
         if (ct instanceof EmbedBuilder) {
             if (!ctx.embeds) ctx.embeds = [];
@@ -57,6 +54,5 @@ export const content = (...contents: contentType[]) => {
         }
     });
 
-    return ctx;
+    return ctx as returnType<ReturnName>;
 };
-content();
