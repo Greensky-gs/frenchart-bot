@@ -58,7 +58,7 @@ export const content = <ReturnName extends returnName>(
                 log4js.trace(`Component list is superior to 5`);
             }
         }
-        if (ct instanceof Object) {
+        if (ct instanceof Object && !(ct instanceof ActionRowBuilder) && !(ct instanceof EmbedBuilder)) {
             Object.assign(ctx, ct);
         }
     });
