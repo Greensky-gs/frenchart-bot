@@ -1,6 +1,6 @@
 import { AmethystCommand, log4js, preconditions, waitForInteraction, waitForMessage } from 'amethystjs';
 import staff from '../preconditions/staff';
-import { button, content, pingRole, row } from '../utils/toolbox';
+import { button, content, pingRole, row, yesNoRow } from '../utils/toolbox';
 import {
     adminShopMapper,
     baseShopAdminList,
@@ -10,17 +10,35 @@ import {
     emptyShop,
     interactionNotAllowed,
     invalidNumber,
-    noRole
+    noRole,
+    notEnoughPoints,
+    unkonwnItem
 } from '../utils/contents';
 import { itemType } from '../typings/database';
-import { ComponentType, Message, StringSelectMenuBuilder, TextChannel } from 'discord.js';
-import { shop } from '../utils/query';
+import { ApplicationCommandOptionType, ComponentType, Message, StringSelectMenuBuilder, TextChannel } from 'discord.js';
+import { coins, inventories, roles, shop } from '../utils/query';
 
 export default new AmethystCommand({
     name: 'magasin',
     aliases: ['shop'],
     description: 'Affiche le magasin',
-    preconditions: [staff, preconditions.GuildOnly]
+    preconditions: [staff, preconditions.GuildOnly],
+    options: [
+        {
+            name: 'acheter',
+            description: "Achète un article du magasin",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'article',
+                    description: "Article à acheter",
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    autocomplete: true
+                }
+            ]
+        }
+    ]
 }).setMessageRun(async ({ message, options }) => {
     const subcommand = options.first?.toLowerCase();
 
@@ -412,5 +430,49 @@ export default new AmethystCommand({
                 message.reply(content('msg', ':x: | La liste est trop grande pour pouvoir être affichée'));
             }
         }
+    }
+})
+.setChatInputRun(async({ interaction, options }) => {
+    const subcommand = options.getSubcommand();
+
+    if (subcommand === 'acheter') {
+        const item = shop.getItem(options.getString('article'))
+        if (!item) return interaction.reply({
+            embeds: [ unkonwnItem(interaction.user) ],
+            ephemeral: true
+        }).catch(log4js.trace)
+
+        if (item.price > coins.getData({ user_id: interaction.user.id }).coins) return interaction.reply({ embeds: [ notEnoughPoints(interaction.user) ], ephemeral: true })
+        const confirmation = await interaction.reply({
+            content: `Êtes-vous sûr de vouloir acheter **${item.name}** pour **${item.price.toLocaleString()}** points ?`,
+            components: [yesNoRow()],
+            fetchReply: true
+        }).catch(log4js.trace) as Message<true>;
+        if (!confirmation) return log4js.trace("Cannot get reply of interaction")
+
+        const decision = await waitForInteraction({
+            componentType: ComponentType.Button,
+            message: confirmation,
+            user: interaction.user,
+            replies: { everyone: interactionNotAllowed(interaction.user).ctx }
+
+        })  .catch(() => {})      
+        if (!decision || decision.customId === 'no') {
+            if (decision) decision.deferUpdate().catch(log4js.trace)
+            return interaction.editReply({
+                embeds: [ cancel() ],
+                content: '',
+                components: []
+            }).catch(log4js.trace)
+        }
+        const rs = shop.buy(item.id);
+        if (rs === 'not buyable') return interaction.editReply({ content: `:x: | L'objet n'a pas pu être acheté car il ne reste plus d'exemplaires disponibles`, components: [] }).catch(log4js.trace);
+        roles.removePoints(interaction.user.id, item.price);
+        inventories.pushItem(interaction.user.id, item);
+
+        interaction.editReply({
+            content: `Vous avez acheté **${item.name}** pour ${item.price.toLocaleString()} points`,
+            components: []
+        }).catch(log4js.trace);
     }
 });

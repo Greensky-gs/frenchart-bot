@@ -127,3 +127,8 @@ export const adminShopMapper = (embed: EmbedBuilder, item: item) =>
         }${item.type === 'role' ? ` (${pingRole(item.role_id)}) ` : ''}`,
         inline: false
     });
+
+    export const unkonwnItem = (user: User) => basicEmbed(user) .setTitle("Article inconnu")
+    .setDescription(`Il semble que cet article n'existe pas`)
+    .setColor('#ff0000')
+export const notEnoughPoints = (user: User) => basicEmbed(user).setTitle("Pas assez de points").setDescription(`Vous n'avez pas assez de points pour faire ça`).setColor('#ff0000')
