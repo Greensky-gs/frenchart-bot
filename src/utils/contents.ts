@@ -47,7 +47,7 @@ export const stats = (user: GuildMember, data: { voice: number; points: number }
         .setFields(
             {
                 name: 'Temps en vocal',
-                value: formatTime(Math.floor((data.voice ?? 0) / 1000)) ?? '0 secondes',
+                value: `Temps: ${formatTime(Math.floor((data.voice ?? 0) / 1000)).length > 0 ? formatTime(Math.floor((data.voice ?? 0) / 1000)) : '0 secondes'}`,
                 inline: true
             },
             {
