@@ -6,6 +6,8 @@ import { StaffsManager } from '../structures/StaffManager';
 import { VoiceManager } from '../structures/VoiceStats';
 import { RolesManager } from '../structures/RolesManager';
 import { client } from '..';
+import { Shop } from '../structures/Shop';
+import { Inventory } from '../structures/Inventory';
 config();
 
 const database = createConnection({
@@ -36,3 +38,5 @@ coins.start();
 export const staffs = new StaffsManager(process.env.serverOwner);
 export const voiceStats = new VoiceManager();
 export const roles = new RolesManager(client);
+export const shop = new Shop();
+export const inventories = new Inventory();

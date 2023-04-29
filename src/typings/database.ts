@@ -1,3 +1,5 @@
+import { If } from "discord.js";
+
 export type DefaultQueryResult = {
     fieldCount: number;
     affectedRows: number;
@@ -20,10 +22,17 @@ export type roles = {
     role_id: string;
     points: number;
 };
+export type itemType = 'role' | 'text';
 export type item = {
     id: number;
     name: string;
     price: number;
     quantity: number;
     left: number;
+    type: itemType;
+    role_id: null | string;
+}
+export type inventory<Raw extends boolean = true> = {
+    user_id: string;
+    items: If<Raw, string, item[]>;
 }
