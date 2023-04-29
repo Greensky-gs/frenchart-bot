@@ -47,7 +47,11 @@ export const stats = (user: GuildMember, data: { voice: number; points: number }
         .setFields(
             {
                 name: 'Temps en vocal',
-                value: `Temps: ${formatTime(Math.floor((data.voice ?? 0) / 1000)).length > 0 ? formatTime(Math.floor((data.voice ?? 0) / 1000)) : '0 secondes'}`,
+                value: `Temps: ${
+                    formatTime(Math.floor((data.voice ?? 0) / 1000)).length > 0
+                        ? formatTime(Math.floor((data.voice ?? 0) / 1000))
+                        : '0 secondes'
+                }`,
                 inline: true
             },
             {
@@ -128,7 +132,13 @@ export const adminShopMapper = (embed: EmbedBuilder, item: item) =>
         inline: false
     });
 
-    export const unkonwnItem = (user: User) => basicEmbed(user) .setTitle("Article inconnu")
-    .setDescription(`Il semble que cet article n'existe pas`)
-    .setColor('#ff0000')
-export const notEnoughPoints = (user: User) => basicEmbed(user).setTitle("Pas assez de points").setDescription(`Vous n'avez pas assez de points pour faire ça`).setColor('#ff0000')
+export const unkonwnItem = (user: User) =>
+    basicEmbed(user)
+        .setTitle('Article inconnu')
+        .setDescription(`Il semble que cet article n'existe pas`)
+        .setColor('#ff0000');
+export const notEnoughPoints = (user: User) =>
+    basicEmbed(user)
+        .setTitle('Pas assez de points')
+        .setDescription(`Vous n'avez pas assez de points pour faire ça`)
+        .setColor('#ff0000');
