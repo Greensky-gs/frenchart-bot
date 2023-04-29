@@ -82,6 +82,7 @@ export class RolesManager {
             coins: points
         });
         if (rs === 'not enough coins') return 'not enough coins';
+        return true;
         if (this.hasRolesAbove(userId)) {
             const member = this.guild.members.cache.get(userId);
             if (!member) return log4js.trace(`Member not fund when remove roles is necessary`);
