@@ -31,7 +31,11 @@ type contentType =
     | { fetchReply?: boolean; ephemeral?: boolean };
 
 type returnName = 'msg' | 'ctx' | 'edit';
-type returnType<Name extends returnName> = Name extends 'msg' ? MessageReplyOptions : Name extends 'edit' ? MessageEditOptions : InteractionReplyOptions;
+type returnType<Name extends returnName> = Name extends 'msg'
+    ? MessageReplyOptions
+    : Name extends 'edit'
+    ? MessageEditOptions
+    : InteractionReplyOptions;
 export const content = <ReturnName extends returnName>(
     type: ReturnName,
     ...contents: contentType[]

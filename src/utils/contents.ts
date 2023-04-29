@@ -111,10 +111,19 @@ export const timeHelp = (user: User) =>
             `Ce n'est pas une durée valide.\nUtilisez \`s\` pour les secondes, \`m\` pour les minutes, \`h\` pour les heures, \`j\` pour les jours et \`sm\` pour les semaines`
         )
         .setColor('#ff0000');
-export const cancelButton = () => button({ label: 'Annuler', id: 'cancel', style: 'Danger' })
-export const emptyShop = (user: User) => basicEmbed(user)   .setTitle("Magasin vide").setDescription(`Il n'y a rien dans le magasin`).setColor('#ff0000')
-export const baseShopAdminList = (user: GuildMember, length: number) => basicEmbed(user.user)
-            .setTitle("Magasin")
-            .setDescription(`Il y a **${length.toLocaleString()}** articles dans le magasin`)
-            .setColor(user.guild.members.me.displayHexColor)
-export const adminShopMapper = (embed: EmbedBuilder, item: item) => embed.addFields({ name: item.name, value: `${item.type === 'role' ? 'Rôle' : 'Texte'} pour **${item.price.toLocaleString()}** points, ${item.quantity === 0 ? 'infini' : `${item.left} sur ${item.quantity} restant(s)`}${item.type === 'role' ? ` (${pingRole(item.role_id)}) ` : ''}`, inline: false })
+export const cancelButton = () => button({ label: 'Annuler', id: 'cancel', style: 'Danger' });
+export const emptyShop = (user: User) =>
+    basicEmbed(user).setTitle('Magasin vide').setDescription(`Il n'y a rien dans le magasin`).setColor('#ff0000');
+export const baseShopAdminList = (user: GuildMember, length: number) =>
+    basicEmbed(user.user)
+        .setTitle('Magasin')
+        .setDescription(`Il y a **${length.toLocaleString()}** articles dans le magasin`)
+        .setColor(user.guild.members.me.displayHexColor);
+export const adminShopMapper = (embed: EmbedBuilder, item: item) =>
+    embed.addFields({
+        name: item.name,
+        value: `${item.type === 'role' ? 'Rôle' : 'Texte'} pour **${item.price.toLocaleString()}** points, ${
+            item.quantity === 0 ? 'infini' : `${item.left} sur ${item.quantity} restant(s)`
+        }${item.type === 'role' ? ` (${pingRole(item.role_id)}) ` : ''}`,
+        inline: false
+    });
