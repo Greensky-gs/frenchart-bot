@@ -10,7 +10,8 @@ export default new Precondition('owner').setMessageRun(({ message }) => {
                 silent: true
             },
             isChatInput: false,
-            isButton: false
+            isButton: false,
+            type: 'message'
         };
     return {
         ok: true,
@@ -19,6 +20,7 @@ export default new Precondition('owner').setMessageRun(({ message }) => {
             silent: true
         },
         isChatInput: false,
-        isButton: false
+        isButton: false,
+        type: 'message'
     };
 });

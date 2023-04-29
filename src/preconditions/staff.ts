@@ -5,8 +5,7 @@ export default new Precondition('staff').setMessageRun(({ message }) => {
     if (!staffs.isStaff(message.author.id)) {
         return {
             ok: false,
-            isChatInput: false,
-            isButton: false,
+            type: 'message',
             channelMessage: message,
             metadata: {
                 silent: true
@@ -17,6 +16,7 @@ export default new Precondition('staff').setMessageRun(({ message }) => {
         ok: true,
         isChatInput: false,
         isButton: false,
-        channelMessage: message
+        channelMessage: message,
+        type: 'message'
     };
 });
