@@ -4,6 +4,7 @@ import { button, content, pingRole, row, yesNoRow } from '../utils/toolbox';
 import {
     adminShopMapper,
     baseShopAdminList,
+    baseShopUser,
     cancel,
     cancelButton,
     classic,
@@ -12,11 +13,13 @@ import {
     invalidNumber,
     noRole,
     notEnoughPoints,
+    shopMapper,
     unkonwnItem
 } from '../utils/contents';
 import { itemType } from '../typings/database';
-import { ApplicationCommandOptionType, ComponentType, Message, StringSelectMenuBuilder, TextChannel } from 'discord.js';
+import { ApplicationCommandOptionType, ComponentType, EmbedBuilder, GuildMember, Message, StringSelectMenuBuilder, TextChannel } from 'discord.js';
 import { coins, inventories, roles, shop } from '../utils/query';
+import { Paginator } from 'dsc-pagination';
 
 export default new AmethystCommand({
     name: 'magasin',
@@ -37,6 +40,11 @@ export default new AmethystCommand({
                     autocomplete: true
                 }
             ]
+        },
+        {
+            name: "afficher",
+            description: "Affiche le magasin",
+            type: ApplicationCommandOptionType.Subcommand
         }
     ]
 })
@@ -209,7 +217,7 @@ export default new AmethystCommand({
                         .reply({
                             content: `Quel est ${
                                 ctx.customId === 'quantity' ? 'la quantité' : 'le prix'
-                            } de l'article ? Répondez dans le chat\nRépondez par \`cancel\` pour annuler`,
+                            } de l'article ? Répondez dans le chat${ctx.customId === 'quantity' ? `\nRépondez par \`infini\` pour donner une quantité infinie`:''}\nRépondez par \`cancel\` pour annuler`,
                             fetchReply: true
                         })
                         .catch(log4js.trace)) as Message<true>;
@@ -232,22 +240,38 @@ export default new AmethystCommand({
                         return;
                     }
                     const price = parseInt(resp.content);
-                    if (isNaN(price) || price < 1) {
-                        prompt
-                            .edit({
-                                content: '',
-                                embeds: [invalidNumber(message.author)]
-                            })
-                            .catch(log4js.trace);
-                        msg.edit(content('edit', ...components(false))).catch(log4js.trace);
-                        setTimeout(() => {
-                            prompt.delete().catch(() => {});
-                        }, 5000);
-                        return;
+                    if (ctx.customId === 'quantity') {
+                        if ((isNaN(price) || price < 1) && resp.content?.toLowerCase() !== 'infini') {
+                            prompt
+                                .edit({
+                                    content: '',
+                                    embeds: [invalidNumber(message.author)]
+                                })
+                                .catch(log4js.trace);
+                            msg.edit(content('edit', ...components(false))).catch(log4js.trace);
+                            setTimeout(() => {
+                                prompt.delete().catch(() => {});
+                            }, 5000);
+                            return;
+                        }
+                    } else {
+                        if (isNaN(price) || price < 1) {
+                            prompt
+                                .edit({
+                                    content: '',
+                                    embeds: [invalidNumber(message.author)]
+                                })
+                                .catch(log4js.trace);
+                            msg.edit(content('edit', ...components(false))).catch(log4js.trace);
+                            setTimeout(() => {
+                                prompt.delete().catch(() => {});
+                            }, 5000);
+                            return;
+                        }
                     }
                     prompt.delete().catch(() => {});
 
-                    item[ctx.customId] = price;
+                    item[ctx.customId] = resp.content?.toLowerCase() === 'infini' ? 0 : price;
                     msg.edit(content('edit', ...components(false), embed())).catch(log4js.trace);
                 }
                 if (ctx.customId === 'role') {
@@ -485,6 +509,17 @@ export default new AmethystCommand({
                         components: []
                     })
                     .catch(log4js.trace);
+                    
+            if (item.type === 'role') {
+                const role = await interaction.guild.roles.fetch(item.role_id).catch(log4js.trace);
+                if (!role) {
+                    return interaction.editReply({
+                        content: `:x: | Le rôle n'a pas pu vous être ajouté car il n'a pas été trouvé`,
+                        components: []
+                    }).catch(log4js.trace)
+                }
+                (interaction.member as GuildMember).roles.add(role).catch(log4js.trace);
+            }
             roles.removePoints(interaction.user.id, item.price);
             inventories.pushItem(interaction.user.id, item);
 
@@ -494,5 +529,50 @@ export default new AmethystCommand({
                     components: []
                 })
                 .catch(log4js.trace);
+        }
+        if (subcommand === 'afficher') {
+            const items= shop.items;
+            if (items.size === 0) return interaction.reply({
+                embeds: [ emptyShop(interaction.user) ],
+                ephemeral: true
+            }).catch(log4js.trace)
+       
+            const buildEmbed = (embed: EmbedBuilder) => {
+                const fields = embed.data.fields.map(x => ({ ...x, inline: true }));
+                const empty = {
+                    name: '\u200b',
+                    value: '\u200b',
+                    inline: false
+                }
+                const mapped = [ fields[0], fields[1], empty, fields[2], fields[3], empty, fields[4], fields[5] ].filter(x => x !== undefined);
+                if (mapped[mapped.length - 1].name === '\u200b') mapped.pop(); 
+                return embed.setFields(mapped);
+            }
+            if (items.size <= 5) {
+                const embed = baseShopUser(interaction.member as GuildMember);
+                shop.items.forEach((item)=> {
+                    shopMapper(embed, item)
+                })
+
+                buildEmbed(embed);
+                interaction.reply(content('ctx', embed)).catch(log4js.trace)
+            } else {
+                const embeds = [baseShopUser(interaction.member as GuildMember)];
+                shop.items.forEach((item, i) => {
+                    if (i % 6 === 0 && i > 0) embeds.push(baseShopUser(interaction.member as GuildMember));
+
+                    shopMapper(embeds[embeds.length - 1], item);
+                })
+                new Paginator({
+                    user: interaction.user,
+                    interaction,
+                    embeds: embeds.map(e => buildEmbed(e)),
+                    cancelContent: content('ctx', { ephemeral: true }, cancel()),
+                    invalidPageContent: (max) => content('ctx', { ephemeral: true }, `Veuillez choisir une page entre **1** et **${max}**`),
+                    interactionNotAllowedContent: interactionNotAllowed(interaction.user).ctx,
+                    modal: { title: 'Page', fieldName: 'numéro de page' },
+                    displayPages: 'footer'
+                });
+            }
         }
     });
