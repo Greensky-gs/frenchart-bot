@@ -142,6 +142,21 @@ export const notEnoughPoints = (user: User) =>
         .setTitle('Pas assez de points')
         .setDescription(`Vous n'avez pas assez de points pour faire ça`)
         .setColor('#ff0000');
-export const baseShopUser = ({ user, guild }: GuildMember) => basicEmbed(user).setTitle("Magasin").setDescription(`Voici le magasin de French'Art`).setColor(guild.members.me.displayHexColor ?? 'Orange')
-export const shopMapper = (embed: EmbedBuilder, item: item) => embed.addFields({ name: `${item.type === 'role' ? 'Rôle' : 'Texte'} ${item.name}`, value: `\nPrix: \`${item.price.toLocaleString()} points\`\n> Stock disponible: ${item.quantity === 0 ? 'infini' : `\`${item.left.toLocaleString()}\``}`, inline: true })
-export const baseInventory = ({user, guild}: GuildMember) => basicEmbed(user).setTitle("Inventaire").setDescription(`Voici votre inventaire`).setColor(guild.members.me.displayHexColor ?? 'Orange')
+export const baseShopUser = ({ user, guild }: GuildMember) =>
+    basicEmbed(user)
+        .setTitle('Magasin')
+        .setDescription(`Voici le magasin de French'Art`)
+        .setColor(guild.members.me.displayHexColor ?? 'Orange');
+export const shopMapper = (embed: EmbedBuilder, item: item) =>
+    embed.addFields({
+        name: `${item.type === 'role' ? 'Rôle' : 'Texte'} ${item.name}`,
+        value: `\nPrix: \`${item.price.toLocaleString()} points\`\n> Stock disponible: ${
+            item.quantity === 0 ? 'infini' : `\`${item.left.toLocaleString()}\``
+        }`,
+        inline: true
+    });
+export const baseInventory = ({ user, guild }: GuildMember) =>
+    basicEmbed(user)
+        .setTitle('Inventaire')
+        .setDescription(`Voici votre inventaire`)
+        .setColor(guild.members.me.displayHexColor ?? 'Orange');
